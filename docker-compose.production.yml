@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  # Backend service
+  backend-v1:
+    build:
+      context: .
+      dockerfile: ./apps/backend-v1/Dockerfile
+      shm_size: '256M'  # Limit memory usage during build
+    container_name: backend-v1-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.production  # Load environment variables from the .env.production file
+    deploy:
+      resources:
+        limits:
+          memory: 256M  # Limit memory usage for the backend-v1 container
+        reservations:
+          memory: 192M  # Reserve 192MB of memory for backend-v1 service
+    depends_on:
+      - mongo
+    networks:
+      - bookify-network
+
+  # MongoDB service
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - mongo-data:/data/db
+    deploy:
+      resources:
+        limits:
+          memory: 512M  # Limit MongoDB memory usage to 512MB
+        reservations:
+          memory: 384M  # Reserve 384MB of memory for MongoDB
+    networks:
+      - bookify-network
+
+  # Landing Page service
+  landingpage-v1:
+    build:
+      context: .
+      dockerfile: ./apps/landingpage-v1/Dockerfile
+      shm_size: '192M'  # Limit memory usage during build
+    container_name: landingpage-v1-app
+    ports:
+      - "4201:4201"  # Dynamically assign ports from .env.production
+    environment:
+      - PORT=4201  # Set the PORT environment variable for Nginx
+    env_file:
+      - .env.production  # Load environment variables from the .env.production file
+    deploy:
+      resources:
+        limits:
+          memory: 192M  # Limit memory usage for landing page to 192MB
+        reservations:
+          memory: 128M  # Reserve 128MB of memory for landing page service
+    networks:
+      - bookify-network
+
+  # Dashboard service
+  dashboard-v1:
+    build:
+      context: .
+      dockerfile: ./apps/dashboard-v1/Dockerfile
+      shm_size: '256M'  # Limit memory usage during build
+    container_name: dashboard-v1-app
+    ports:
+      - "4200:4200"  # Dynamically assign ports from .env.production
+    environment:
+      - PORT=4200  # Set the PORT environment variable for Nginx
+    env_file:
+      - .env.production  # Load environment variables from the .env.production file
+    deploy:
+      resources:
+        limits:
+          memory: 256M  # Limit memory usage for dashboard-v1 to 256MB
+        reservations:
+          memory: 128M  # Reserve 128MB of memory for dashboard-v1 service
+    networks:
+      - bookify-network
+
+  # Public service
+  public-v1:
+    build:
+      context: .
+      dockerfile: ./apps/public-v1/Dockerfile
+      shm_size: '192M'  # Limit memory usage during build
+    container_name: public-v1-app
+    ports:
+      - "4202:4202"  # Dynamically assign ports from .env.production
+    environment:
+      - PORT=4202  # Set the PORT environment variable for Nginx
+    env_file:
+      - .env.production  # Load environment variables from the .env.production file
+    deploy:
+      resources:
+        limits:
+          memory: 192M  # Limit memory usage for public-v1 service to 192MB
+        reservations:
+          memory: 128M  # Reserve 128MB of memory for public-v1 service
+    networks:
+      - bookify-network
+
+# Networks
+networks:
+  bookify-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  mongo-data:
