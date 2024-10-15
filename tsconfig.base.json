@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@bookify-v1/shared": ["shared/src/index.ts"]
+      "@bookify-v1/shared": ["shared/src/index.ts"],
+      "@bookify-v1/shared-components": ["shared-components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
