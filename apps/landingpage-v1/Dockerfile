@@ -18,7 +18,7 @@ RUN npx nx build landingpage-v1 --skip-nx-cache
 FROM nginx:alpine
 
 # Set the PORT environment variable
-ARG VITE_DASHBOARD_PORT=4200
+ARG VITE_DASHBOARD_PORT=4201
 ENV PORT=${VITE_DASHBOARD_PORT}
 
 # Print the PORT to verify it's set correctly
