@@ -1,26 +1,32 @@
-# Step 1: Use Node.js for building and running the backend-v1 app
-FROM node:18-alpine AS backend-v1
+# Step 1: Build Stage
+FROM node:18-alpine AS build
 
-# Set the working directory to the root of the monorepo
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Copy the root package.json and package-lock.json to install dependencies for the whole monorepo
+# Copy package.json and package-lock.json to install dependencies
 COPY package.json package-lock.json ./
 
-# Install dependencies for the entire monorepo with --legacy-peer-deps (if needed)
+# Install dependencies (use --legacy-peer-deps if needed)
 RUN npm install --legacy-peer-deps
 
-# Copy the rest of the Nx workspace (including the backend-v1 and shared libraries)
+# Copy the entire workspace (adjust depending on which parts are needed)
 COPY . .
 
 # Build the backend-v1 app (assuming you have an Nx build target)
 RUN npx nx build backend-v1 --skip-nx-cache
 
-# Change directory to the built backend-v1 app
-WORKDIR /usr/src/app/dist/apps/backend-v1
+# Step 2: Runtime Stage
+FROM node:18-alpine AS runtime
 
-# Expose the backend-v1 port
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy the built app from the build stage
+COPY --from=build /usr/src/app/dist/apps/backend-v1 ./
+
+# Expose the port used by the backend
 EXPOSE 8000
 
-# Start the backend-v1 server
+# Start the server
 CMD ["node", "main.js"]
