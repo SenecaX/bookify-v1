@@ -1,6 +1,6 @@
 import LanguageIcon from '@mui/icons-material/Language';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Button, Menu, MenuItem, Toolbar, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
+import { AppBar, Box, Button, Menu, MenuItem, Toolbar, IconButton, Drawer, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -93,19 +93,9 @@ const Header = () => {
     <>
       <StyledAppBar position="static">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box>
-            Testing
-          </Box>
-
-          {!isMobile && (
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: '24px' }}>
-              <NavButton>Enterprise</NavButton>
-              <NavButton onClick={handleMenuClick(setIndustriesMenuAnchor)}>Industries ▼</NavButton>
-              <NavButton>Features</NavButton>
-              <NavButton>Pricing</NavButton>
-              <NavButton onClick={handleMenuClick(setResourcesMenuAnchor)}>Resources ▼</NavButton>
-            </Box>
-          )}
+          <Typography sx={{ color: "#000"}} component={"h1"}>
+          Instabooking
+          </Typography>
 
           {!isMobile ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
