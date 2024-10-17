@@ -1,0 +1,51 @@
+export const companyHourUtils = [
+  {
+    day: 'Monday',
+    isDayOn: true,
+    start: '08:00',
+    end: '17:00',
+    breaks: [],
+  },
+  {
+    day: 'Tuesday',
+    isDayOn: true,
+    start: '09:00',
+    end: '18:00',
+    breaks: [],
+  },
+  {
+    day: 'Wednesday',
+    isDayOn: true,
+    start: '08:00',
+    end: '17:00',
+    breaks: [],
+  },
+  {
+    day: 'Thursday',
+    isDayOn: true,
+    start: '08:00',
+    end: '17:00',
+    breaks: [],
+  },
+  {
+    day: 'Friday',
+    isDayOn: true,
+    start: '08:00',
+    end: '17:00',
+    breaks: [],
+  },
+  {
+    day: 'Saturday',
+    isDayOn: false,
+    start: '',
+    end: '',
+    breaks: [],
+  },
+  {
+    day: 'Sunday',
+    isDayOn: false,
+    start: '',
+    end: '',
+    breaks: [],
+  },
+];
