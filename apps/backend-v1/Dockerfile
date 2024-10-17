@@ -1,6 +1,9 @@
 # Step 1: Build Stage
 FROM node:18-alpine AS build
 
+# Install necessary build tools for bcrypt and other native modules
+RUN apk add --no-cache make gcc g++ python3
+
 # Set the working directory
 WORKDIR /usr/src/app
 
@@ -19,11 +22,17 @@ RUN npx nx build backend-v1 --skip-nx-cache
 # Step 2: Runtime Stage
 FROM node:18-alpine AS runtime
 
+# Install necessary build tools for bcrypt and other native modules
+RUN apk add --no-cache make gcc g++ python3
+
 # Set the working directory
 WORKDIR /usr/src/app
 
 # Copy the built app from the build stage
 COPY --from=build /usr/src/app/dist/apps/backend-v1 ./
+
+# Install bcrypt directly in the runtime environment
+RUN npm install bcrypt --build-from-source
 
 # Expose the port used by the backend
 EXPOSE 8000
