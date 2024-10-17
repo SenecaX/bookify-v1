@@ -31,8 +31,11 @@ WORKDIR /usr/src/app
 # Copy the built app from the build stage
 COPY --from=build /usr/src/app/dist/apps/backend-v1 ./
 
-# Install bcrypt directly in the runtime environment
-RUN npm install bcrypt --build-from-source
+# Copy node_modules from the build stage
+COPY --from=build /usr/src/app/node_modules ./node_modules
+
+# Copy .env.production file into the image
+COPY .env.production ./
 
 # Expose the port used by the backend
 EXPOSE 8000
