@@ -1,8 +1,10 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
+    "target": "es2020",
+    "module": "esnext",
     "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client"],
     "strict": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
