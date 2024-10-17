@@ -1,41 +1,26 @@
-# Step 1: Build the React app with Node.js
-FROM node:18-alpine AS builder
+# Step 1: Use Node.js for building and running the backend-v1 app
+FROM node:18-alpine AS backend-v1
 
-# Set the working directory in the container
+# Set the working directory to the root of the monorepo
 WORKDIR /usr/src/app
 
-# Copy the package.json and install dependencies
-COPY package.json ./
+# Copy the root package.json and package-lock.json to install dependencies for the whole monorepo
+COPY package.json package-lock.json ./
+
+# Install dependencies for the entire monorepo with --legacy-peer-deps (if needed)
 RUN npm install --legacy-peer-deps
 
-# Copy the rest of the Nx workspace
+# Copy the rest of the Nx workspace (including the backend-v1 and shared libraries)
 COPY . .
 
-# Build the React app (replace 'landingpage-v1' with your actual app name)
-RUN npx nx build landingpage-v1 --skip-nx-cache
+# Build the backend-v1 app (assuming you have an Nx build target)
+RUN npx nx build backend-v1 --skip-nx-cache
 
-# Step 2: Use Nginx to serve the static files
-FROM nginx:alpine
+# Change directory to the built backend-v1 app
+WORKDIR /usr/src/app/dist/apps/backend-v1
 
-# Set the PORT environment variable
-ARG VITE_DASHBOARD_PORT=4201
-ENV PORT=${VITE_DASHBOARD_PORT}
+# Expose the backend-v1 port
+EXPOSE 8000
 
-# Print the PORT to verify it's set correctly
-RUN echo "The PORT is set to: ${PORT}"
-
-# Copy the custom Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Use a temporary file for envsubst to avoid overwriting the original
-RUN envsubst '${PORT}' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.temp \
-    && mv /etc/nginx/conf.d/default.temp /etc/nginx/conf.d/default.conf
-
-# Copy the built React app from the builder stage to the Nginx HTML folder
-COPY --from=builder /usr/src/app/dist/apps/landingpage-v1 /usr/share/nginx/html
-
-# Expose the dynamic port
-EXPOSE ${PORT}
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the backend-v1 server
+CMD ["node", "main.js"]
