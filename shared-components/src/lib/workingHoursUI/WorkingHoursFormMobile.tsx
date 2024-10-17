@@ -10,7 +10,7 @@ import {
   AccordionDetails,
   useTheme,
 } from '@mui/material';
-import { DaySchedule, FormSwitch, FormTimePicker } from '@bookify/shared-components';
+import { DaySchedule, FormSwitch, FormTimePicker } from '@bookify-v1/shared-components';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';

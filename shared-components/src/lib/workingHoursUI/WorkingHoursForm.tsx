@@ -1,5 +1,5 @@
 // WorkingHoursForm.tsx
-import { FormSwitch, FormTimePicker } from '@bookify/shared-components';
+import { FormSwitch, FormTimePicker } from '@bookify-v1/shared-components';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Grid, IconButton, Typography, useTheme } from '@mui/material';
