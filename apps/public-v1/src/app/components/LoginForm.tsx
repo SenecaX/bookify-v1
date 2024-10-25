@@ -9,12 +9,14 @@ interface LoginFormProps {
   onSubmit: (data: LoginFormData) => void;
   loading: boolean;
   error: string | null;
+  showTestCredentials?: boolean;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
   onSubmit,
   loading,
   error,
+  showTestCredentials = false,
 }) => {
   const methods = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
@@ -79,6 +81,36 @@ const LoginForm: React.FC<LoginFormProps> = ({
                     {loading ? 'Logging in...' : 'Login'}
                   </Button>
                 </Grid>
+
+                    {/* Test Credentials */}
+              {showTestCredentials && (
+                <Grid item xs={12}>
+                  <Box
+                    sx={{
+                      mt: 3,
+                      p: 2,
+                      borderRadius: '8px',
+                      backgroundColor: '#f0f4ff', // Light blue background
+                      border: '1px solid #d0e2ff', // Slightly darker blue border
+                      color: '#1a73e8', // Use a blue color code for text
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                    >
+                      Test Accounts
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Customer:</strong> black.widow@gmail.com /
+                      Test2024
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
+
               </Grid>
             </form>
           </FormProvider>

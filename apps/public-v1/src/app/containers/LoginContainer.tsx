@@ -57,7 +57,7 @@ const LoginContainer: React.FC = () => {
 
   return (
     <>
-      <LoginForm onSubmit={handleLogin} loading={loading} error={error} />
+      <LoginForm onSubmit={handleLogin} loading={loading} error={error}  showTestCredentials={ companyName === "test"} />
       <CustomSnackbar 
         open={snackbarOpen} 
         message={snackbarMessage} 
