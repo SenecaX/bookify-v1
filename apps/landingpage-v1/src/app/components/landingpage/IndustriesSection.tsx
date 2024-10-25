@@ -33,7 +33,7 @@ const titleStyles = {
 
 const IndustriesSection = () => {
   return (
-    <Box sx={{ mt: 12, px: 3, py: 6, mx: 'auto', backgroundColor: theme.palette.background.default }}>
+    <Box sx={{ mt: 12, px: 3, py: 6, mx: 'auto' }}>
       <Typography variant="h3" sx={titleStyles}>
         Industries We Serve
       </Typography>

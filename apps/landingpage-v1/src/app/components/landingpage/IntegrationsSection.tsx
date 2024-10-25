@@ -5,6 +5,7 @@ import { theme } from '@bookify-v1/shared';
 const integrations = [
   'Google Calendar Sync',
   'Google Single Sign-On',
+  'AI Powered bookings',
 ];
 
 // Extract styles for the integration cards
@@ -27,7 +28,6 @@ const IntegrationsSection = () => {
         mt: 12, 
         px: 3, 
         py: 8, 
-        backgroundColor: theme.palette.background.default, 
         maxWidth: '1200px', 
         mx: 'auto' 
       }}

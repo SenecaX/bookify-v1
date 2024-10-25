@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Typography, useMedi
 
 const faqs = [
   { question: 'How does Bookify work?', answer: 'Bookify allows you to manage your bookings online.' },
-  { question: 'Is there a free trial?', answer: 'Yes, you can try Bookify for free for 14 days.' },
+  // { question: 'Is there a free trial?', answer: 'Yes, you can try Bookify for free for 14 days.' },
 ];
 
 const FAQSection = () => {
@@ -16,7 +16,6 @@ const FAQSection = () => {
         mt: 12, 
         px: 3, 
         py: 8, 
-        backgroundColor: theme.palette.background.default, 
         mx: 'auto', // Center content horizontally
       }}
     >

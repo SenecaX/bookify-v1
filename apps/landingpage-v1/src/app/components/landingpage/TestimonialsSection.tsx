@@ -27,7 +27,6 @@ const TestimonialsSection = () => {
         mt: 12, 
         px: 3, 
         py: 8, 
-        backgroundColor: theme.palette.background.default, 
         maxWidth: '1200px', 
         mx: 'auto' 
       }}

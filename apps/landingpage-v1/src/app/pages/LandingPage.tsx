@@ -19,7 +19,7 @@ const LandingPage = () => {
         <HeroSection />
         <FeaturesSection />
         <IndustriesSection />
-        <TestimonialsSection />
+        {/* <TestimonialsSection /> */}
         <HowItWorksSection />
         <IntegrationsSection />
         <FAQSection />
