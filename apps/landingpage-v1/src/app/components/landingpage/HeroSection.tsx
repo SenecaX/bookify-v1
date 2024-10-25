@@ -61,13 +61,10 @@ const HeroSection = () => {
   return (
     <Box sx={boxStyles}>
       <Typography variant="h2" sx={titleStyles}>
-        Welcome to Bookify
+      Start Managing Your Bookings Effortlessly.
       </Typography>
       <Typography variant="h5" sx={subtitleStyles}>
-        Your Online Booking System
-      </Typography>
-      <Typography variant="subtitle1" sx={descriptionStyles}>
-        Simplify your booking process and manage your services effortlessly.
+      Simplifying Appointment Scheduling for Your Business.
       </Typography>
       <Button 
         variant="contained" 
