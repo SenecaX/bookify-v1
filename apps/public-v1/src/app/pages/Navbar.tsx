@@ -27,7 +27,8 @@ const Navbar: React.FC = () => {
 
   const handleLogin = () => navigate('/login');
   const handleSignup = () => navigate('/register-customer');
-  const handleProfile = () => navigate('/profile'); // Assuming there's a profile route
+  const handleProfile = () => navigate('/profile');
+  const handleAppointment = () => navigate('/appointments');
   const handleLogout = () => {
     dispatch(logout()); // Dispatch the logout action
     navigate('/'); // Optionally, navigate to the home page after logging out
@@ -45,6 +46,9 @@ const Navbar: React.FC = () => {
         <>
           <ListItem onClick={handleProfile}>
             <ListItemText primary="Profile" />
+          </ListItem>
+          <ListItem onClick={handleAppointment}>
+            <ListItemText primary="Appointments" />
           </ListItem>
           <ListItem onClick={handleLogout}>
             <ListItemText primary="Logout" />
@@ -65,7 +69,11 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" color="primary" sx={{ padding: '0 20px', borderRadius: 0 }}>
+      <AppBar
+        position="static"
+        color="primary"
+        sx={{ padding: '0 20px', borderRadius: 0 }}
+      >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           {/* Left side: Company Name/Logo */}
           <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
@@ -100,6 +108,11 @@ const Navbar: React.FC = () => {
                   <Button color="inherit" onClick={handleProfile}>
                     Profile
                   </Button>
+
+                  <Button color="inherit" onClick={handleAppointment}>
+                  Appointments
+                  </Button>
+         
                   <Button
                     variant="contained"
                     color="secondary"
@@ -107,7 +120,11 @@ const Navbar: React.FC = () => {
                     sx={{
                       bgcolor: 'secondary.main',
                       fontSize: { xs: '12px', sm: '14px', md: '16px' },
-                      padding: { xs: '6px 12px', sm: '8px 16px', md: '10px 20px' },
+                      padding: {
+                        xs: '6px 12px',
+                        sm: '8px 16px',
+                        md: '10px 20px',
+                      },
                       minWidth: { xs: '80px', sm: '100px', md: '150px' },
                     }}
                   >
@@ -125,7 +142,11 @@ const Navbar: React.FC = () => {
                     sx={{
                       bgcolor: 'secondary.main',
                       fontSize: { xs: '12px', sm: '14px', md: '16px' },
-                      padding: { xs: '6px 12px', sm: '8px 16px', md: '10px 20px' },
+                      padding: {
+                        xs: '6px 12px',
+                        sm: '8px 16px',
+                        md: '10px 20px',
+                      },
                       minWidth: { xs: '80px', sm: '100px', md: '150px' },
                     }}
                   >

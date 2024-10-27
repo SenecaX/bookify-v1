@@ -114,6 +114,48 @@ export const bookAppointmentAsync = createAsyncThunk<
   }
 );
 
+export const fetchAppointmentsAsync = createAsyncThunk<
+  IAppointment[],
+  void, // No parameters needed since we’re hardcoding the date range
+  { rejectValue: string; state: RootState }
+>(
+  'appointment/fetchAppointments',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      const token = state.auth.user?.token;
+
+      if (!token) {
+        return rejectWithValue('Authentication token is missing');
+      }
+
+      // Hardcoded date range for fetching all appointments within a reasonable period
+      const start = new Date('2024-01-01T00:00:00.000Z').toISOString(); // Example start date
+      const end = new Date('2024-12-31T23:59:59.999Z').toISOString(); // Example end date
+
+      const response = await api.get(`/appointments`, {
+        params: { start, end },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = response?.data.data;
+
+      if (!data || !Array.isArray(data)) {
+        return rejectWithValue('Invalid data format received from server');
+      }
+
+      return data;
+    } catch (err: any) {
+      if (err.response) {
+        return rejectWithValue(
+          err.response.data.message || 'Failed to fetch appointments'
+        );
+      }
+      return rejectWithValue('Network error');
+    }
+  }
+);
+
 
 const appointmentSlice = createSlice({
   name: 'appointment',
@@ -149,8 +191,21 @@ const appointmentSlice = createSlice({
         state.appointments = [];
         state.loading = false;
         state.error = action.payload || 'Unknown error';
+      })
+      .addCase(fetchAppointmentsAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAppointmentsAsync.fulfilled, (state, action) => {
+        state.appointments = action.payload; // Set appointments
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchAppointmentsAsync.rejected, (state, action) => {
+        state.appointments = []; // Clear appointments on error
+        state.loading = false;
+        state.error = action.payload || 'Unknown error';
       });
-
   },
 });
 
@@ -160,3 +215,4 @@ export default appointmentSlice.reducer;
 export const selectAvailableSlots = (state: RootState) => state.appointment.availableSlots;
 export const selectAppointmentError = (state: RootState) => state.appointment.error;
 export const selectLoadingState = (state: RootState) => state.appointment.loading; // New loading selector
+export const selectAppointments = (state: RootState) => state.appointment.appointments; // New selector for appointments
