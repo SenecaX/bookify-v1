@@ -1,11 +1,21 @@
 import React from 'react';
 import { Grid, Card, CardContent, CardHeader, Typography, Avatar } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
-import { IAppointment } from '../types';
 import { deepPurple } from '@mui/material/colors';
 
 interface AppointmentListProps {
-  appointments: IAppointment[];
+  appointments: Array<{
+    _id: string;
+    serviceId: string;
+    providerId: string;
+    customerId: string;
+    dateTime: string;
+    endTime: string;
+    status: string;
+    createdAt: string;
+    providerName: string;
+    customerName: string;
+  }>;
 }
 
 const AppointmentList: React.FC<AppointmentListProps> = ({ appointments }) => {
@@ -22,14 +32,14 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments }) => {
                   </Avatar>
                 }
                 title={
-            <></>
+                 <></>
                 }
                 subheader={`Status: ${appointment.status}`}
                 subheaderTypographyProps={{ color: getStatusColor(appointment.status) }}
               />
               <CardContent>
-                <Typography variant="body2"><strong>Provider:</strong> {appointment.providerId}</Typography>
-                <Typography variant="body2"><strong>Customer:</strong> {appointment.customerId}</Typography>
+                <Typography variant="body2"><strong>Provider:</strong> {appointment.providerName}</Typography>
+                <Typography variant="body2"><strong>Customer:</strong> {appointment.customerName}</Typography>
                 <Typography variant="body2"><strong>Start:</strong> {new Date(appointment.dateTime).toLocaleString()}</Typography>
                 <Typography variant="body2"><strong>End:</strong> {new Date(appointment.endTime).toLocaleString()}</Typography>
                 <Typography variant="caption" color="text.secondary">Created At: {new Date(appointment.createdAt).toLocaleString()}</Typography>
