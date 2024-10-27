@@ -140,11 +140,11 @@ export const bookAppointmentAsync = createAsyncThunk<
 // Async thunk to fetch appointments for a provider
 export const fetchAppointmentsAsync = createAsyncThunk<
   IAppointment[],
-  { start: string; end: string },
+  { start: string; end: string; status?: string[], providerId?: string }, // Add optional status array
   { rejectValue: string; state: RootState }
 >(
   'appointment/fetchAppointments',
-  async ({ start, end }, { rejectWithValue, getState }) => {
+  async ({ start, end, status = [], providerId }, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const token = state.auth.user?.token;
@@ -153,8 +153,14 @@ export const fetchAppointmentsAsync = createAsyncThunk<
         return rejectWithValue('Authentication token is missing');
       }
 
+      // Include status in params if provided
       const response = await api.get(`/appointments`, {
-        params: { start, end }, // Only start and end dates needed
+        params: {
+          start,
+          end,
+          providerId,
+          ...(status.length > 0 && { status: status.join(',') }) // Join status array if it's not empty
+        },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -175,6 +181,7 @@ export const fetchAppointmentsAsync = createAsyncThunk<
     }
   }
 );
+
 
 // Thunk to block time for a provider
 export const blockProviderTimeAsync = createAsyncThunk<

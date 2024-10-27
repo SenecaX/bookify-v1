@@ -283,6 +283,7 @@ export const fetchAppointments = async (
   statusArray: string[] // New parameter for statuses
 ): Promise<any> => {
   try {
+    console.log("userId", userId)
     const appointments = await appointmentRepository.findAppointments(userId as string, role, startDate, endDate, statusArray);
 
     if (!appointments.length) {

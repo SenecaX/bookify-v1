@@ -69,9 +69,9 @@ export const fetchAppointmentsController = async (
 ): Promise<void> => {
 
   try {
-    const { start, end, status } = req.query;
+    const { start, end, status, providerId: queryUserId } = req.query;
     const role = req.user.role;  
-    const userId = req.user.id;
+    const userId = queryUserId || req.user.id; // Use queryUserId if provided, else default to req.user.id
 
     if (!start || !end) {
       res.status(400).json({ message: 'Start and end dates are required' });
@@ -81,12 +81,20 @@ export const fetchAppointmentsController = async (
     // Convert status to an array if provided, otherwise an empty array
     const statusArray = status ? (status as string).split(',') : [];
 
-    const result = await fetchAppointments(userId as string, role, new Date(start as string), new Date(end as string), statusArray);
+    const result = await fetchAppointments(
+      userId as string, 
+      role, 
+      new Date(start as string), 
+      new Date(end as string), 
+      statusArray
+    );
+    
     res.status(result.status).json(result);
   } catch (error) {
     next(error);
   }
 };
+
 
 export const blockProviderTimeController = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {

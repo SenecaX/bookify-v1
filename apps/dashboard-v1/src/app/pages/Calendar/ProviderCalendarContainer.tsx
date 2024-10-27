@@ -120,7 +120,9 @@ const ProviderCalendarContainer: React.FC = () => {
       // Fetch appointments and blocked times for the selected provider
       fetchAppointments(
         startOfRange.toISOString(),
-        endOfRange.toISOString()
+        endOfRange.toISOString(),
+        status,
+        selectedProvider?._id
       );
       fetchBlockedTimes(
         newProvider._id,
@@ -151,6 +153,8 @@ const ProviderCalendarContainer: React.FC = () => {
     triggerSuccessSnackbar,
   } = useProviderCalendarManager();
 
+  const status = ["Booked"];
+
   // Fetch appointments and blocked times when date range changes
   useEffect(() => {
     if (startOfRange && endOfRange) {
@@ -160,7 +164,9 @@ const ProviderCalendarContainer: React.FC = () => {
 
         fetchAppointments(
           startOfRange.toISOString(),
-          endOfRange.toISOString()
+          endOfRange.toISOString(),
+          status,
+          selectedProvider._id
         );
         fetchBlockedTimes(
           providerId,
@@ -175,7 +181,8 @@ const ProviderCalendarContainer: React.FC = () => {
 
         fetchAppointments(
           startOfRange.toISOString(),
-          endOfRange.toISOString()
+          endOfRange.toISOString(),
+          status
         );
         fetchBlockedTimes(
           providerId,
@@ -294,7 +301,8 @@ const ProviderCalendarContainer: React.FC = () => {
         closeModal(); // Close modal on success
         fetchAppointments(
           startOfRange.toISOString(),
-          endOfRange.toISOString()
+          endOfRange.toISOString(),
+          status
         );
         triggerSuccessSnackbar('Appointment booked successfully');
       } else {
@@ -351,7 +359,9 @@ const ProviderCalendarContainer: React.FC = () => {
         closeModal();
         fetchAppointments(
           startOfRange.toISOString(),
-          endOfRange.toISOString()
+          endOfRange.toISOString(),
+          status,
+          selectedProvider?._id
         );
         triggerSuccessSnackbar('Appointment cancelled successfully');
       } else {

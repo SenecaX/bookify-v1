@@ -25,7 +25,7 @@ export class AppointmentRepository {
     if (isNaN(start.getTime()) || isNaN(end.getTime())) throw new Error('Invalid start or end date provided to findAppointments.');
     
     const query: any = {
-      [role === 'provider' ? 'providerId' : 'customerId']: userId,
+      [role === 'provider' || role === 'admin' ? 'providerId' : 'customerId']: userId,
       dateTime: { $gte: start, $lt: end }
     };
   

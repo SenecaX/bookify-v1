@@ -26,8 +26,6 @@ export const updateCompanyController = async (req: AuthenticatedRequest, res: Re
 };
 
 export const getCompanyByNameController = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-  console.log('Company route hit with name:', req.params.name);
-
   try {
     const { name } = req.params; // Get the company name from the URL params
     const result = await getCompanyByName(name);
