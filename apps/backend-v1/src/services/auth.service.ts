@@ -70,8 +70,6 @@ export const loginUser = async (credentials: any, path: string): Promise<Respons
     };
   }
 
-  console.log("usersss", user)
-
   // Generate JWT Token
   const token = jwt.sign(
     { id: user._id, email: user.email, role: user.role, companyId: user.companyId },
@@ -85,9 +83,16 @@ export const loginUser = async (credentials: any, path: string): Promise<Respons
     message: 'Login successful',
     data: {
       userId: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
+      phone: user.phone,
+      address: user.address,
+      isActive: user.isActive,
       role: user.role,
       companyId: user.companyId,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       token,
       expiresIn: 24 * 60 * 60, // in seconds
     },

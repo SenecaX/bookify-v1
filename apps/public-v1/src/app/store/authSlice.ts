@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { RegistrationFormData } from '../types';
+import { RegistrationFormData, User } from '../types';
 import api from '../services/api';
 
 // Define the shape of the state
@@ -9,13 +9,7 @@ interface AuthState {
     error: string | null;
     success: boolean;
   };
-  user: {
-    userId: string | null;
-    email: string | null;
-    role: string | null;
-    token: string | null;
-    expiresIn: number | null;
-  };
+  user: User | null; // Now using the `User` type directly, or `null` when unauthenticated
 }
 
 // Initial state
@@ -25,14 +19,9 @@ const initialState: AuthState = {
     error: null,
     success: false,
   },
-  user: {
-    userId: null,
-    email: null,
-    role: null,
-    token: null,
-    expiresIn: null,
-  },
+  user: null,
 };
+
 
 // Async thunk for admin registration
 export const registerAdminAsync = createAsyncThunk<
@@ -58,7 +47,7 @@ export const registerAdminAsync = createAsyncThunk<
 
 // Async thunk for user login
 export const loginUserAsync = createAsyncThunk<
-  { userId: string; email: string; role: string; token: string; expiresIn: number },
+User,
   { email: string; password: string },
   { rejectValue: string }
 >(
@@ -66,6 +55,7 @@ export const loginUserAsync = createAsyncThunk<
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login/customer', data);
+      console.log("response.data", response.data)
       return response.data.data; // Assuming the relevant user data is inside 'data'
     } catch (err: any) {
       if (err.response) {
@@ -91,13 +81,7 @@ const authSlice = createSlice({
         error: null,
         success: false,
       };
-      state.user = {
-        userId: null,
-        email: null,
-        role: null,
-        token: null,
-        expiresIn: null,
-      };
+      state.user = null;      
     },
   },
   extraReducers: (builder) => {
@@ -131,14 +115,11 @@ const authSlice = createSlice({
         state.authStatus.loading = false;
         state.authStatus.error = null;
         state.authStatus.success = true;
-
+      
         // Save the user data into the state
-        state.user.userId = action.payload.userId;
-        state.user.email = action.payload.email;
-        state.user.role = action.payload.role;
-        state.user.token = action.payload.token;
-        state.user.expiresIn = action.payload.expiresIn;
+        state.user = action.payload;
       })
+      
       // User login rejected
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.authStatus.loading = false;

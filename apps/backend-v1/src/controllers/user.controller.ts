@@ -8,9 +8,8 @@ export const fetchUsersController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { role } = req.query; // Capture role from query params if provided
-    const companyId = req.user.companyId; // Capture companyId from authenticated user
-    console.log("req.user", req.user)
+    const { role } = req.query; 
+    const companyId = req.user.companyId; 
     
     if (!companyId) {
        res.status(400).json({

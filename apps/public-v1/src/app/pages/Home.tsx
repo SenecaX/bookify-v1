@@ -9,7 +9,7 @@ import { fetchServicesAsync } from '../store/service.slice';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const token = useSelector((state: RootState) => state.auth.user.token);
+  const token = useSelector((state: RootState) => state.auth.user?.token);
 
   useEffect(() => {
     if (token) {

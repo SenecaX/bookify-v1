@@ -112,7 +112,7 @@ export interface User {
   email: string;
   phone?: string;      
   isActive?: boolean;
-  address: {               // Make `address` non-optional
+  address: {
     street?: string;
     city?: string;
     zip?: string;
@@ -122,4 +122,8 @@ export interface User {
   companyId?: string;
   createdAt: string;
   updatedAt: string;
+  // Optional auth fields
+  token?: string;
+  expiresIn?: number;
+  userId?: string;
 }
