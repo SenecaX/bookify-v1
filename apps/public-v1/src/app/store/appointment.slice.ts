@@ -116,11 +116,11 @@ export const bookAppointmentAsync = createAsyncThunk<
 
 export const fetchAppointmentsAsync = createAsyncThunk<
   IAppointment[],
-  void, // No parameters needed since we’re hardcoding the date range
+  { status?: string[] }, // Update to accept an optional status array
   { rejectValue: string; state: RootState }
 >(
   'appointment/fetchAppointments',
-  async (_, { rejectWithValue, getState }) => {
+  async ({ status = [] }, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const token = state.auth.user?.token;
@@ -134,7 +134,7 @@ export const fetchAppointmentsAsync = createAsyncThunk<
       const end = new Date('2024-12-31T23:59:59.999Z').toISOString(); // Example end date
 
       const response = await api.get(`/appointments`, {
-        params: { start, end },
+        params: { start, end, status: status.join(',') }, // Pass status as comma-separated string
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -149,6 +149,50 @@ export const fetchAppointmentsAsync = createAsyncThunk<
       if (err.response) {
         return rejectWithValue(
           err.response.data.message || 'Failed to fetch appointments'
+        );
+      }
+      return rejectWithValue('Network error');
+    }
+  }
+);
+
+
+export const cancelAppointmentAsync = createAsyncThunk<
+  { message: string; data?: IAppointment }, // Type of returned data on success
+  { appointmentId: string; reason: string }, // Parameters for the API
+  { rejectValue: string; state: RootState } // Additional typing for reject and state
+>(
+  'appointment/cancelAppointment',
+  async ({ appointmentId, reason }, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      const token = state.auth.user?.token;
+
+      if (!token) {
+        return rejectWithValue('Authentication token is missing');
+      }
+
+      const response = await api.put(
+        `/appointments/${appointmentId}/cancel`,
+        { reason },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = response?.data;
+
+      if (!data) {
+        return rejectWithValue('Failed to cancel appointment');
+      }
+
+      return data;
+    } catch (err: any) {
+      if (err.response) {
+        return rejectWithValue(
+          err.response.data.message || 'Failed to cancel appointment'
         );
       }
       return rejectWithValue('Network error');
@@ -205,6 +249,20 @@ const appointmentSlice = createSlice({
         state.appointments = []; // Clear appointments on error
         state.loading = false;
         state.error = action.payload || 'Unknown error';
+      })
+      .addCase(cancelAppointmentAsync.pending, (state) => {
+        state.loading = true; // Set loading state to true
+        state.error = null; // Clear any previous errors
+      })
+      .addCase(cancelAppointmentAsync.fulfilled, (state, action) => {
+        const canceledAppointmentId = action.meta.arg.appointmentId;
+
+        state.loading = false; // Clear loading state
+        state.error = null; // Clear any previous errors
+      })
+      .addCase(cancelAppointmentAsync.rejected, (state, action) => {
+        state.loading = false; // Clear loading state
+        state.error = action.payload || 'Failed to cancel appointment'; // Set error message
       });
   },
 });

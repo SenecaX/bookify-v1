@@ -279,10 +279,11 @@ export const fetchAppointments = async (
   userId: Types.ObjectId | string,
   role: string,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  statusArray: string[] // New parameter for statuses
 ): Promise<any> => {
   try {
-    const appointments = await appointmentRepository.findAppointments(userId as string, role, startDate, endDate);
+    const appointments = await appointmentRepository.findAppointments(userId as string, role, startDate, endDate, statusArray);
 
     if (!appointments.length) {
       return { status: 404, message: 'No appointments found within the specified date range', data: null };

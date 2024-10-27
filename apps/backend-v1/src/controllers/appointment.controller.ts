@@ -69,7 +69,7 @@ export const fetchAppointmentsController = async (
 ): Promise<void> => {
 
   try {
-    const { start, end } = req.query;
+    const { start, end, status } = req.query;
     const role = req.user.role;  
     const userId = req.user.id;
 
@@ -78,7 +78,10 @@ export const fetchAppointmentsController = async (
       return;
     }
 
-    const result = await fetchAppointments(userId as string, role, new Date(start as string), new Date(end as string));
+    // Convert status to an array if provided, otherwise an empty array
+    const statusArray = status ? (status as string).split(',') : [];
+
+    const result = await fetchAppointments(userId as string, role, new Date(start as string), new Date(end as string), statusArray);
     res.status(result.status).json(result);
   } catch (error) {
     next(error);
