@@ -1,37 +1,33 @@
 import React from 'react';
-import { User } from '../types'; // Assuming User type is defined in types
+import { useSelector } from 'react-redux';
+import { RootState } from '../store'; // Adjust the import to match your store's structure
 import ProfileForm from '../components/ProfileForm';
+import { User } from '../types';
 
 const ProfilePage: React.FC = () => {
-  // Sample user data (replace with actual data retrieval logic)
-  const userProfile: Partial<User> = {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1234567890',
-    address: {
-      street: '123 Main St',
-      city: 'Anytown',
-      zip: '12345',
-      country: 'Country',
-    },
-  };
+  // Retrieve the user profile and auth status from Redux
+  const userProfile = useSelector((state: RootState) => state.auth.user);
+  const authStatus = useSelector((state: RootState) => state.auth.authStatus);
 
-  // Mock function to handle form submission
+  // Handle form submission
   const handleProfileSubmit = (data: User) => {
     console.log('Profile data submitted:', data);
-    // Implement actual submission logic here
+    // Implement actual submission logic here (e.g., dispatch an update action)
   };
 
   return (
     <div>
       <h1>Profile Page</h1>
-      <ProfileForm
-        userProfile={userProfile}
-        onSubmit={handleProfileSubmit}
-        loading={false} // Replace with loading state logic if needed
-        error={null} // Replace with error state logic if needed
-      />
+      {userProfile ? (
+        <ProfileForm
+          userProfile={userProfile}
+          onSubmit={handleProfileSubmit}
+          loading={authStatus.loading} // Use actual loading state
+          error={authStatus.error} // Use actual error state
+        />
+      ) : (
+        <p>Loading profile...</p>
+      )}
     </div>
   );
 };
