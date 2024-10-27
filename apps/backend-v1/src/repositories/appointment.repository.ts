@@ -21,17 +21,16 @@ export class AppointmentRepository {
     return await Service.findById(serviceId).exec();
   }
 
-  async findAppointments(providerId: string, start: Date, end: Date) {
-    // Validate that start and end are valid Dates
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      throw new Error('Invalid start or end date provided to findAppointments.');
-    }
+  async findAppointments(userId: string, role: string, start: Date, end: Date) {
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) throw new Error('Invalid start or end date provided to findAppointments.');
   
-    return await Appointment.find({
-      providerId,
+    const query = {
+      [role === 'provider' ? 'providerId' : 'customerId']: userId,
       dateTime: { $gte: start, $lt: end },
       status: { $ne: 'Cancelled' },
-    }).exec();
+    };
+    
+    return await Appointment.find(query).exec();
   }
 
   // Method to cancel an appointment by ID

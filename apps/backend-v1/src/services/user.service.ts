@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken';
 const userRepository = new UserRepository();
 
 export const fetchUsers = async ( companyId: string, role?: string): Promise<any> => {
-  console.log('role', role);
   try {
     const users = await userRepository.findUsersByRole(companyId, role); // Pass companyId to the repository
     return {

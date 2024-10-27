@@ -138,13 +138,13 @@ export const bookAppointmentAsync = createAsyncThunk<
 );
 
 // Async thunk to fetch appointments for a provider
-export const fetchAppointmentsByProviderAsync = createAsyncThunk<
-  IAppointment[], // Type of the returned data (array of appointments)
-  { providerId: string; start: string; end: string }, // The parameters for the API request
-  { rejectValue: string; state: RootState } // Additional typing for reject and state
+export const fetchAppointmentsAsync = createAsyncThunk<
+  IAppointment[],
+  { start: string; end: string },
+  { rejectValue: string; state: RootState }
 >(
   'appointment/fetchAppointments',
-  async ({ providerId, start, end }, { rejectWithValue, getState }) => {
+  async ({ start, end }, { rejectWithValue, getState }) => {
     try {
       const state = getState();
       const token = state.auth.user?.token;
@@ -153,12 +153,9 @@ export const fetchAppointmentsByProviderAsync = createAsyncThunk<
         return rejectWithValue('Authentication token is missing');
       }
 
-      // Make the API request with the token in the Authorization header
-      const response = await api.get(`/appointments/provider/appointments`, {
-        params: { providerId, start, end }, // Pass providerId along with start and end
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await api.get(`/appointments`, {
+        params: { start, end }, // Only start and end dates needed
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = response?.data.data;
@@ -167,9 +164,8 @@ export const fetchAppointmentsByProviderAsync = createAsyncThunk<
         return rejectWithValue('Invalid data format received from server');
       }
 
-      return data; // Return the array of appointments
+      return data;
     } catch (err: any) {
-      // Handle both network errors and API response errors
       if (err.response) {
         return rejectWithValue(
           err.response.data.message || 'Failed to fetch appointments'
@@ -363,12 +359,22 @@ export const cancelBlockedTimeAsync = createAsyncThunk<
 );
 
 export const editAppointmentAsync = createAsyncThunk<
-  { message: string, data?: any },  // Type of the returned data on success
-  {appointmentId: string, customerId:string, providerId: string, serviceId: string, date: string, time: string },  // Parameters for the API request
-  { rejectValue: string, state: RootState }  // Additional typing for reject and state
+  { message: string; data?: any }, // Type of the returned data on success
+  {
+    appointmentId: string;
+    customerId: string;
+    providerId: string;
+    serviceId: string;
+    date: string;
+    time: string;
+  }, // Parameters for the API request
+  { rejectValue: string; state: RootState } // Additional typing for reject and state
 >(
   'appointment/editAppointment',
-  async ({ appointmentId, customerId, providerId, serviceId, date, time }, { rejectWithValue, getState }) => {
+  async (
+    { appointmentId, customerId, providerId, serviceId, date, time },
+    { rejectWithValue, getState }
+  ) => {
     try {
       const state = getState();
       const token = state.auth.user?.token;
@@ -377,17 +383,21 @@ export const editAppointmentAsync = createAsyncThunk<
         return rejectWithValue('Authentication token is missing');
       }
 
-      const response = await api.put(`/appointments/${appointmentId}`, {
-        customerId,
-        providerId,
-        serviceId,
-        date,
-        time,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await api.put(
+        `/appointments/${appointmentId}`,
+        {
+          customerId,
+          providerId,
+          serviceId,
+          date,
+          time,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = response?.data;
 
@@ -398,13 +408,14 @@ export const editAppointmentAsync = createAsyncThunk<
       return data;
     } catch (err: any) {
       if (err.response) {
-        return rejectWithValue(err.response.data.message || 'Failed to edit appointment');
+        return rejectWithValue(
+          err.response.data.message || 'Failed to edit appointment'
+        );
       }
       return rejectWithValue('Network error');
     }
   }
 );
-
 
 const appointmentSlice = createSlice({
   name: 'appointment',
@@ -441,16 +452,16 @@ const appointmentSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Unknown error';
       })
-      .addCase(fetchAppointmentsByProviderAsync.pending, (state) => {
+      .addCase(fetchAppointmentsAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchAppointmentsByProviderAsync.fulfilled, (state, action) => {
+      .addCase(fetchAppointmentsAsync.fulfilled, (state, action) => {
         state.appointments = action.payload; // Overwrites the existing appointments array
         state.loading = false;
         state.error = null;
       })
-      .addCase(fetchAppointmentsByProviderAsync.rejected, (state, action) => {
+      .addCase(fetchAppointmentsAsync.rejected, (state, action) => {
         state.appointments = []; // Clear appointments on error
         state.loading = false;
         state.error = action.payload || 'Unknown error';
@@ -494,12 +505,12 @@ const appointmentSlice = createSlice({
       })
       .addCase(cancelAppointmentAsync.fulfilled, (state, action) => {
         const canceledAppointmentId = action.meta.arg.appointmentId;
-        
+
         // Filter out the canceled appointment from the appointments list
         state.appointments = state.appointments.filter(
           (appointment) => appointment._id !== canceledAppointmentId
         );
-        
+
         state.loading = false; // Clear loading state
         state.error = null; // Clear any previous errors
       })
@@ -513,12 +524,12 @@ const appointmentSlice = createSlice({
       })
       .addCase(cancelBlockedTimeAsync.fulfilled, (state, action) => {
         const canceledBlockedTimeId = action.meta.arg.blockedTimeId;
-    
+
         // Filter out the canceled blocked time from the blockedTimes list
         state.blockedTimes = state.blockedTimes.filter(
           (blockedTime) => blockedTime._id !== canceledBlockedTimeId
         );
-        
+
         state.loading = false; // Clear loading state
         state.error = null; // Clear any previous errors
       })
@@ -533,7 +544,9 @@ const appointmentSlice = createSlice({
       .addCase(editAppointmentAsync.fulfilled, (state, action) => {
         // Assuming you want to update the specific appointment in state.appointments array
         const updatedAppointment = action.payload.data;
-        const index = state.appointments.findIndex(app => app._id === updatedAppointment._id);
+        const index = state.appointments.findIndex(
+          (app) => app._id === updatedAppointment._id
+        );
         if (index !== -1) {
           state.appointments[index] = updatedAppointment;
         }

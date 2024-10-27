@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { blockProviderTimeController, bookAppointmentController, cancelAppointmentController, fetchAvailableSlotsController, fetchBlockedTimesByProviderController, fetchProviderAppointmentsController } from '../controllers/appointment.controller';
+import { blockProviderTimeController, bookAppointmentController, cancelAppointmentController, fetchAvailableSlotsController, fetchBlockedTimesByProviderController, fetchAppointmentsController } from '../controllers/appointment.controller';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.get('/:providerId/availability', authMiddleware, fetchAvailableSlotsContr
 
 router.post('/book', authMiddleware, bookAppointmentController);
 
-router.get('/provider/appointments', authMiddleware, fetchProviderAppointmentsController);
+router.get('/', authMiddleware, fetchAppointmentsController);
 
 router.post('/providers/:providerId/block-time', authMiddleware, blockProviderTimeController);
 

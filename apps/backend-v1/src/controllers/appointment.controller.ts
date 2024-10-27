@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import moment from 'moment-timezone'; // Ensure you're importing moment-timezone
 import { AuthenticatedRequest } from '../types/authenticatedRequest';
-import { blockProviderTime, cancelAppointment, createAppointment, editAppointment, fetchAppointmentsForProvider, fetchBlockedTimesByProvider, getProviderAvailableSlots } from '../services/appointment.service';
+import { blockProviderTime, cancelAppointment, createAppointment, editAppointment, fetchAppointments, fetchBlockedTimesByProvider, getProviderAvailableSlots } from '../services/appointment.service';
 
 export const fetchAvailableSlotsController = async (
   req: AuthenticatedRequest,
@@ -11,6 +11,7 @@ export const fetchAvailableSlotsController = async (
   try {
     const providerId = req.params.providerId; // Extracting providerId from the URL parameters
     const { serviceId, date } = req.query; // Extracting serviceId and date from the query parameters
+    const role = req.user.role;
 
     // Validate required parameters
     if (!providerId || !serviceId || !date) {
@@ -27,7 +28,8 @@ export const fetchAvailableSlotsController = async (
     const availableSlots = await getProviderAvailableSlots(
       providerId,
       serviceId as string,
-      selectedDate
+      selectedDate,
+      role
     );
     res.status(200).json(availableSlots);
   } catch (error) {
@@ -42,6 +44,7 @@ export const bookAppointmentController = async (
 ): Promise<void> => {
   try {
     const { customerId, providerId, serviceId, date, time } = req.body;
+    const role = req.user.role;
 
     // Validate required fields
     if (!customerId || !providerId || !serviceId || !date || !time) {
@@ -49,7 +52,7 @@ export const bookAppointmentController = async (
     }
 
     // Call the service layer to handle appointment creation
-    const result = await createAppointment(customerId, providerId, serviceId, date, time);
+    const result = await createAppointment(customerId, providerId, serviceId, date, time, role);
 
     // Return the status code directly from the service result
      res.status(result.status).json(result);
@@ -59,21 +62,23 @@ export const bookAppointmentController = async (
   }
 };
 
+export const fetchAppointmentsController = async (
+  req: AuthenticatedRequest, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
 
-export const fetchProviderAppointmentsController = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { providerId, start, end } = req.query;  // Extract providerId, start, and end from query parameters
+    const { start, end } = req.query;
+    const role = req.user.role;  
+    const userId = req.user.id;
 
-    // Check if required query parameters are provided
-    if (!providerId || !start || !end) {
-      res.status(400).json({ message: 'Provider ID, start, and end dates are required' });
+    if (!start || !end) {
+      res.status(400).json({ message: 'Start and end dates are required' });
       return;
     }
 
-    // Fetch appointments for the specified providerId
-    const result = await fetchAppointmentsForProvider(providerId as any, new Date(start as string), new Date(end as string));
-
-    // Send the result back to the client
+    const result = await fetchAppointments(userId as string, role, new Date(start as string), new Date(end as string));
     res.status(result.status).json(result);
   } catch (error) {
     next(error);
@@ -93,7 +98,6 @@ export const blockProviderTimeController = async (req: AuthenticatedRequest, res
   }
 };
 
-
 export const fetchBlockedTimesByProviderController = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { providerId } = req.params;
@@ -106,7 +110,6 @@ export const fetchBlockedTimesByProviderController = async (req: AuthenticatedRe
   }
 };
 
-// Controller to handle appointment cancellation
 export const cancelAppointmentController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -130,6 +133,7 @@ export const editAppointmentController = async (
   try {
     const { appointmentId } = req.params;
     const { customerId, providerId, serviceId, date, time } = req.body;
+    const role = req.user.role;
 
     // Validate required fields
     if (!appointmentId || !customerId || !providerId || !serviceId || !date || !time) {
@@ -137,7 +141,7 @@ export const editAppointmentController = async (
     }
 
     // Call the service layer to handle appointment update
-    const result = await editAppointment(appointmentId, customerId, providerId, serviceId, date, time);
+    const result = await editAppointment(appointmentId, customerId, providerId, serviceId, date, time, role);
 
     // Return the status code directly from the service result
     res.status(result.status).json(result);

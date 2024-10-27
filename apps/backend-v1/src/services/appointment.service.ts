@@ -21,7 +21,8 @@ interface WorkingHours {
 export const getProviderAvailableSlots = async (
   providerId: string,
   serviceId: string,
-  selectedDate: moment.Moment
+  selectedDate: moment.Moment,
+  role: string
 ): Promise<{ status: number; code: string; message: string; data?: { availableSlots: string[] } }> => {
   let availableSlots: string[] = [];
 
@@ -85,8 +86,6 @@ export const getProviderAvailableSlots = async (
         data: { availableSlots: [] },
       };
     }
-    console.log('Working Hours for the Day:', hoursForDay);
-
     // Step 4: Generate time slots using service duration and buffer time
     console.log('--- Generating Time Slots ---');
     // Construct startTime and endTime with the selected date and timezone
@@ -107,9 +106,6 @@ export const getProviderAvailableSlots = async (
       second: 0,
       millisecond: 0,
     });
-
-    console.log('Start Time:', startTime.format());
-    console.log('End Time:', endTime.format());
 
     // Validate constructed times
     if (!startTime.isValid() || !endTime.isValid()) {
@@ -134,6 +130,7 @@ export const getProviderAvailableSlots = async (
     console.log('--- Fetching Existing Appointments ---');
     const appointments = await appointmentRepository.findAppointments(
       providerId,
+      role,
       startTime.toDate(),
       endTime.toDate()
     );
@@ -221,7 +218,8 @@ export const createAppointment = async (
   providerId: string,
   serviceId: string,
   date: string,
-  time: string
+  time: string,
+  role: string
 ): Promise<{ status: number; message: string; data?: any }> => {
   try {
     const appointmentDateTime = moment.tz(`${date} ${time}`, 'YYYY-MM-DD HH:mm', 'Indian/Reunion').utc().toDate();
@@ -243,7 +241,7 @@ export const createAppointment = async (
 
     const endTime = new Date(appointmentDateTime.getTime() + service.duration * 60000);
 
-    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, appointmentDateTime, endTime);
+    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, appointmentDateTime, endTime);
     if (overlappingAppointments.length > 0) {
       return {
         status: 409,
@@ -277,39 +275,23 @@ export const createAppointment = async (
   }
 };
 
-export const fetchAppointmentsForProvider = async (
-  providerId: Types.ObjectId | string,
+export const fetchAppointments = async (
+  userId: Types.ObjectId | string,
+  role: string,
   startDate: Date,
   endDate: Date
 ): Promise<any> => {
   try {
-    // Use the repository method instead of directly querying the DB
-    const appointments = await appointmentRepository.findAppointments(
-      providerId.toString(),
-      startDate,
-      endDate
-    );
+    const appointments = await appointmentRepository.findAppointments(userId as string, role, startDate, endDate);
 
-    if (appointments.length === 0) {
-      return {
-        status: 404,
-        message: 'No appointments found within the specified date range',
-        data: null,
-      };
+    if (!appointments.length) {
+      return { status: 404, message: 'No appointments found within the specified date range', data: null };
     }
 
-    return {
-      status: 200,
-      message: 'Appointments fetched successfully',
-      data: appointments,
-    };
+    return { status: 200, message: 'Appointments fetched successfully', data: appointments };
   } catch (error) {
-    console.error('Error fetching provider appointments:', error);
-    return {
-      status: 500,
-      message: 'Unable to fetch appointments',
-      error,
-    };
+    console.error('Error fetching appointments:', error);
+    return { status: 500, message: 'Unable to fetch appointments', error };
   }
 };
 
@@ -437,7 +419,8 @@ export const editAppointment = async (
   providerId: string,
   serviceId: string,
   date: string,
-  time: string
+  time: string,
+  role: string
 ): Promise<{ status: number; message: string; data?: any }> => {
   try {
     const appointmentDateTime = moment.tz(`${date} ${time}`, 'YYYY-MM-DD HH:mm', 'Indian/Reunion').utc().toDate();
@@ -469,7 +452,7 @@ export const editAppointment = async (
     }
 
     // Check for overlapping appointments with the new time
-    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, appointmentDateTime, endTime);
+    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, appointmentDateTime, endTime);
     if (overlappingAppointments.length > 0 && overlappingAppointments[0]._id.toString() !== appointmentId) {
       return {
         status: 409,

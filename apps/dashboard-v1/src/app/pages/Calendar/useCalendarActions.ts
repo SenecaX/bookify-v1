@@ -1,16 +1,16 @@
+import { unwrapResult } from '@reduxjs/toolkit';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
 import { AppDispatch } from '../../store';
 import {
-  bookAppointmentAsync,
-  fetchAvailableSlotsAsync,
-  fetchAppointmentsByProviderAsync,
-  fetchBlockedTimesAsync,
   blockProviderTimeAsync,
+  bookAppointmentAsync,
   cancelAppointmentAsync,
   cancelBlockedTimeAsync,
-  editAppointmentAsync
+  editAppointmentAsync,
+  fetchAppointmentsAsync,
+  fetchAvailableSlotsAsync,
+  fetchBlockedTimesAsync
 } from '../../store/appointment.slice';
 
 export const useCalendarActions = () => {
@@ -47,18 +47,20 @@ export const useCalendarActions = () => {
   );  
 
   // Fetch appointments for a specific date range
-  const fetchAppointments = useCallback(
-    async (providerId: string, start: string, end: string) => {
-      try {
-        const response = await dispatch(fetchAppointmentsByProviderAsync({ providerId, start, end }));
-        const result = unwrapResult(response);
-        return { success: true, data: result }; // Return the fetched appointments
-      } catch (error: any) {
-        return { success: false, error }; // Pass the error object
-      }
-    },
-    [dispatch]
-  );
+// Updated fetchAppointments function
+const fetchAppointments = useCallback(
+  async (start: string, end: string) => {
+    try {
+      const response = await dispatch(fetchAppointmentsAsync({ start, end }));
+      const result = unwrapResult(response);
+      return { success: true, data: result };
+    } catch (error: any) {
+      return { success: false, error };
+    }
+  },
+  [dispatch]
+);
+
 
   // Fetch blocked times for a provider
   const fetchBlockedTimes = useCallback(

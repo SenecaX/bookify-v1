@@ -119,7 +119,6 @@ const ProviderCalendarContainer: React.FC = () => {
 
       // Fetch appointments and blocked times for the selected provider
       fetchAppointments(
-        newProvider._id,
         startOfRange.toISOString(),
         endOfRange.toISOString()
       );
@@ -160,7 +159,6 @@ const ProviderCalendarContainer: React.FC = () => {
         const providerId = selectedProvider._id;
 
         fetchAppointments(
-          providerId,
           startOfRange.toISOString(),
           endOfRange.toISOString()
         );
@@ -176,7 +174,6 @@ const ProviderCalendarContainer: React.FC = () => {
         if (!providerId) return;
 
         fetchAppointments(
-          providerId,
           startOfRange.toISOString(),
           endOfRange.toISOString()
         );
@@ -296,7 +293,6 @@ const ProviderCalendarContainer: React.FC = () => {
       if (response.success) {
         closeModal(); // Close modal on success
         fetchAppointments(
-          providerId,
           startOfRange.toISOString(),
           endOfRange.toISOString()
         );
@@ -354,7 +350,6 @@ const ProviderCalendarContainer: React.FC = () => {
       if (response.success && providerId) {
         closeModal();
         fetchAppointments(
-          providerId,
           startOfRange.toISOString(),
           endOfRange.toISOString()
         );
