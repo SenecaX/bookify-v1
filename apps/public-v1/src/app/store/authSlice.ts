@@ -129,6 +129,10 @@ const authSlice = createSlice({
       };
       state.user = null;      
     },
+    resetAuthStatus(state) {
+      state.authStatus.success = false;
+      state.authStatus.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -173,13 +177,10 @@ const authSlice = createSlice({
         state.authStatus.success = false;
       })
       .addCase(updateUserProfileAsync.fulfilled, (state, action) => {
-        console.log("action payload in fulfilled", action.payload);
-      
-        // Update only the fields returned in action.payload
         state.user = {
-          ...state.user, // Preserve existing properties
-          ...action.payload, // Update only fields present in payload
-        } as User; // Ensure type safety with `User`
+          ...state.user,
+          ...action.payload, 
+        } as User; 
       
         state.authStatus.success = true;
       })
@@ -191,5 +192,5 @@ const authSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { resetState, logout } = authSlice.actions;
+export const { resetState, logout, resetAuthStatus } = authSlice.actions;
 export default authSlice.reducer;
