@@ -1,6 +1,5 @@
 import { Schema, Document, model } from 'mongoose';
 
-// IUser Schema Definition
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
@@ -43,14 +42,14 @@ export interface IUser extends Document {
 
 // Subdocument for working hours
 const WorkingHoursSchema = new Schema({
-  day: { type: String, required: true },  // Change from 'days' to single 'day'
-  start: { type: String, required: true },  // Time in format "HH:mm"
-  end: { type: String, required: true },    // Time in format "HH:mm"
+  day: { type: String, required: true }, 
+  start: { type: String, required: true }, 
+  end: { type: String, required: true }, 
   breaks: [{
     start: { type: String, required: true },
     end: { type: String, required: true }
   }],
-  bufferTime: { type: Number }  // Time in minutes between appointments
+  bufferTime: { type: Number }  
 });
 
 // Subdocument for unavailable periods
@@ -86,8 +85,7 @@ const UserSchema = new Schema<IUser>({
   },
   isActive: { type: Boolean, default: true },
   role: { type: String, enum: ['admin', 'provider', 'customer'], required: true, index: true },
-  companyId: { type: Schema.Types.ObjectId, ref: 'Company' },  // Corrected to use Schema.Types.ObjectId
-  
+  companyId: { type: Schema.Types.ObjectId, ref: 'Company' }, 
   // Provider-specific fields
   servicesOffered: [ServicesOfferedSchema],
   workingHours: [WorkingHoursSchema],
@@ -107,22 +105,6 @@ UserSchema.pre('save', function(next) {
     user.notificationSettings = undefined;
   }
 
-  next();
-});
-
-// Validation: Ensure required fields based on user role
-UserSchema.pre('validate', function(next) {
-  const user = this as IUser;
-
-  // if (user.role === 'provider') {
-  //   if (!user.servicesOffered || !user.servicesOffered.length) {
-  //     return next(new Error('Provider must have at least one service offered.'));
-  //   }
-  //   if (!user.workingHours || !user.workingHours.length) {
-  //     return next(new Error('Provider must have working hours defined.'));
-  //   }
-  // }
-  
   next();
 });
 

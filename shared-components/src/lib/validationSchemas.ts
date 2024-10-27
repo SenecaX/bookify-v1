@@ -318,3 +318,31 @@ export const serviceSchema = Yup.object({
     .min(0, 'Buffer duration must be at least 0'),
 
 });
+
+export const profileSchema = Yup.object({
+  firstName: Yup.string()
+    .required('First name is required')
+    .max(50, 'First name must be less than 50 characters')
+    .optional(),
+  lastName: Yup.string()
+    .required('Last name is required')
+    .max(50, 'Last name must be less than 50 characters')
+    .optional(),
+  email: Yup.string()
+    .required('Email is required')
+    .email('Must be a valid email')
+    .optional(),
+  phone: Yup.string()
+    .matches(
+      /^\+?[0-9]{7,14}$/,
+      'Phone number must be between 7 and 14 digits and may include a country code'
+    )
+    .optional(),
+  address: Yup.object({
+    street: Yup.string().max(100, 'Street must be less than 100 characters').optional(),
+    city: Yup.string().max(50, 'City must be less than 50 characters').optional(),
+    zip: Yup.string().max(10, 'ZIP code must be less than 10 characters').optional(),
+    country: Yup.string().max(50, 'Country must be less than 50 characters').optional(),
+  }).optional(),
+});
+

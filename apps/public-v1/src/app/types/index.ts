@@ -104,3 +104,22 @@ export interface IAppointment {
   createdAt: Date;               // Timestamp when the appointment was created
   updatedAt: Date;               // Timestamp when the appointment was last updated
 }
+
+export interface User {
+  _id: string;           
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;      
+  isActive?: boolean;
+  address: {               // Make `address` non-optional
+    street?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
+  };
+  role: 'admin' | 'provider' | 'customer';
+  companyId?: string;
+  createdAt: string;
+  updatedAt: string;
+}

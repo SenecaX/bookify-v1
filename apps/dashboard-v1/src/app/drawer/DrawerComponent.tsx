@@ -1,10 +1,9 @@
-import React from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Link } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
 import ServicesIcon from '@mui/icons-material/Build';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PeopleIcon from '@mui/icons-material/People';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface DrawerComponentProps {
   drawerWidth: number;

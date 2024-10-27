@@ -6,6 +6,7 @@ import BookingConfirmation from './pages/BookingConfirmation';
 import AppointmentCalendar from './pages/Calendar/AppointmentCalendar';
 import Home from './pages/Home';
 import ProviderServiceSelection from './pages/ProviderServiceSelection';
+import ProfilePage from './pages/ProfilePage';
 
 export interface RouteConfig {
   path: string;
@@ -20,6 +21,8 @@ const routesConfig: RouteConfig[] = [
   { path: '/provider-service-selection', component: <ProviderServiceSelection />, protected: true },
   { path: '/appointment-calendar', component: <AppointmentCalendar />, protected: true },
   { path: '/confirm-booking', component: <BookingConfirmation />, protected: true },
+  { path: '/profile', component: <ProfilePage />, protected: true },
+
 ];
 
 export default routesConfig;
