@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RegistrationFormData, User } from '../types';
 import api from '../services/api';
+import { RootState } from '.';
 
 // Define the shape of the state
 interface AuthState {
@@ -55,7 +56,6 @@ User,
   async (data, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login/customer', data);
-      console.log("response.data", response.data)
       return response.data.data; // Assuming the relevant user data is inside 'data'
     } catch (err: any) {
       if (err.response) {
@@ -66,6 +66,52 @@ User,
     }
   }
 );
+
+export const updateUserProfileAsync = createAsyncThunk<
+  User, // The updated user data returned from the API
+  Partial<User>, // The user data we are sending for the update
+  { rejectValue: string }
+>(
+  'auth/updateUserProfile',
+  async (updates, { getState, rejectWithValue }) => {
+    try {
+      const state = getState() as RootState;
+      const userId = state.auth.user?.userId;
+      const token = state.auth.user?.token;
+
+      if (!userId) {
+        return rejectWithValue('User ID not found');
+      }
+
+      if (!token) {
+        return rejectWithValue('Authorization token is missing');
+      }
+
+      // Make the API call with Authorization header
+      const response = await api.put(
+        `/users/${userId}`,
+        updates,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("response.data", response.data)
+
+
+      return response.data.data as User; // Assuming API response contains the updated user in `data`
+    } catch (err: any) {
+      if (err.response) {
+        return rejectWithValue(err.response.data.message || 'Profile update failed');
+      } else {
+        return rejectWithValue('Network error');
+      }
+    }
+  }
+);
+
 
 // Redux slice definition
 const authSlice = createSlice({
@@ -124,6 +170,21 @@ const authSlice = createSlice({
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.authStatus.loading = false;
         state.authStatus.error = action.payload || 'Login failed';
+        state.authStatus.success = false;
+      })
+      .addCase(updateUserProfileAsync.fulfilled, (state, action) => {
+        console.log("action payload in fulfilled", action.payload);
+      
+        // Update only the fields returned in action.payload
+        state.user = {
+          ...state.user, // Preserve existing properties
+          ...action.payload, // Update only fields present in payload
+        } as User; // Ensure type safety with `User`
+      
+        state.authStatus.success = true;
+      })
+      .addCase(updateUserProfileAsync.rejected, (state, action) => {
+        state.authStatus.error = action.payload || 'Failed to update profile';
         state.authStatus.success = false;
       });
   },

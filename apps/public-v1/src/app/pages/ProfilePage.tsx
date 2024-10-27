@@ -1,18 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store'; // Adjust the import to match your store's structure
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store'; // Adjust the import to match your store's structure
 import ProfileForm from '../components/ProfileForm';
 import { User } from '../types';
+import { updateUserProfileAsync } from '../store/authSlice';
 
 const ProfilePage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>(); // Access the Redux dispatch function
   // Retrieve the user profile and auth status from Redux
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const authStatus = useSelector((state: RootState) => state.auth.authStatus);
 
   // Handle form submission
-  const handleProfileSubmit = (data: User) => {
-    console.log('Profile data submitted:', data);
-    // Implement actual submission logic here (e.g., dispatch an update action)
+  const handleProfileSubmit = (data: Partial<User>) => {
+    dispatch(updateUserProfileAsync(data));
   };
 
   return (

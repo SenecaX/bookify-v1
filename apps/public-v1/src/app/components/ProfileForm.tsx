@@ -129,13 +129,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   fullWidth
                 />
               </Grid>
-              {error && (
-                <Grid item xs={12}>
-                  <Typography color="error" variant="body2" align="center">
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
               <Grid item xs={12}>
                 <Button
                   type="submit"
