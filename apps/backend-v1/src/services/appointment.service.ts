@@ -131,12 +131,13 @@ export const getProviderAvailableSlots = async (
     const appointments = await appointmentRepository.findAppointments(
       providerId,
       role,
+      "own",
       startTime.toDate(),
       endTime.toDate()
     );
     console.log('Appointments Fetched:', appointments);
 
-    const bookedSlots = appointments.map(appointment =>
+    const bookedSlots = appointments.data.map(appointment =>
       moment(appointment.dateTime).tz(timezone).format('HH:mm')
     );
     console.log('Booked Slots:', bookedSlots);
@@ -241,8 +242,9 @@ export const createAppointment = async (
 
     const endTime = new Date(appointmentDateTime.getTime() + service.duration * 60000);
 
-    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, appointmentDateTime, endTime);
-    if (overlappingAppointments.length > 0) {
+    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, "own", appointmentDateTime, endTime);
+    
+    if (overlappingAppointments.data && overlappingAppointments.data.length > 0) {
       return {
         status: 409,
         message: 'Time slot is already booked'
@@ -278,18 +280,20 @@ export const createAppointment = async (
 export const fetchAppointments = async (
   userId: Types.ObjectId | string,
   role: string,
+  scope: string,
   startDate: Date,
   endDate: Date,
   statusArray: string[] // New parameter for statuses
 ): Promise<any> => {
   try {
-    const appointments = await appointmentRepository.findAppointments(userId as string, role, startDate, endDate, statusArray);
+    const appointments = await appointmentRepository.findAppointments(userId as string, role, scope, startDate, endDate, statusArray);
 
-    if (!appointments.length) {
-      return { status: 404, message: 'No appointments found within the specified date range', data: null };
-    }
+   // Check if the appointments data array is empty
+   if (!appointments.data || !appointments.data.length) {
+    return { status: 404, message: 'No appointments found within the specified date range', data: null };
+  }
 
-    return { status: 200, message: 'Appointments fetched successfully', data: appointments };
+  return appointments; 
   } catch (error) {
     console.error('Error fetching appointments:', error);
     return { status: 500, message: 'Unable to fetch appointments', error };
@@ -453,8 +457,8 @@ export const editAppointment = async (
     }
 
     // Check for overlapping appointments with the new time
-    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, appointmentDateTime, endTime);
-    if (overlappingAppointments.length > 0 && overlappingAppointments[0]._id.toString() !== appointmentId) {
+    const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, "own", appointmentDateTime, endTime);
+    if (overlappingAppointments.data.length > 0 && overlappingAppointments[0]._id.toString() !== appointmentId) {
       return {
         status: 409,
         message: 'Time slot is already booked'

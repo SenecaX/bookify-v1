@@ -138,7 +138,10 @@ export const fetchAppointmentsAsync = createAsyncThunk<
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = response?.data.data;
+      const data = response?.data?.data;
+
+      console.log("data", data)
+
 
       if (!data || !Array.isArray(data)) {
         return rejectWithValue('Invalid data format received from server');

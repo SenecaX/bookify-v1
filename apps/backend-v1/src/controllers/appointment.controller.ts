@@ -69,7 +69,7 @@ export const fetchAppointmentsController = async (
 ): Promise<void> => {
 
   try {
-    const { start, end, status, providerId: queryUserId } = req.query;
+    const { start, end, status, providerId: queryUserId, scope } = req.query;
     const role = req.user.role;  
     const userId = queryUserId || req.user.id; // Use queryUserId if provided, else default to req.user.id
 
@@ -84,12 +84,14 @@ export const fetchAppointmentsController = async (
     const result = await fetchAppointments(
       userId as string, 
       role, 
+      scope,
       new Date(start as string), 
       new Date(end as string), 
       statusArray
     );
     
-    res.status(result.status).json(result);
+    res.status(200).json({ status: 200, message: 'Appointments fetched successfully', data: result.data });
+
   } catch (error) {
     next(error);
   }
