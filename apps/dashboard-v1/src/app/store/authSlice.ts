@@ -47,7 +47,6 @@ export const registerAdminAsync = createAsyncThunk<
       // Register the admin, replace 'customer' with 'admin' if required
       await api.post('/auth/register', { ...data, role: 'customer' });
     } catch (err: any) {
-      console.log('err', err); // Log for debugging
       if (err.response) {
         return rejectWithValue(err.response.data.message || 'Registration failed');
       } else {

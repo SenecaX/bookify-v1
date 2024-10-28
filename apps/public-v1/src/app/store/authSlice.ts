@@ -98,10 +98,7 @@ export const updateUserProfileAsync = createAsyncThunk<
         }
       );
 
-      console.log("response.data", response.data)
-
-
-      return response.data.data as User; // Assuming API response contains the updated user in `data`
+      return response.data.data as User; 
     } catch (err: any) {
       if (err.response) {
         return rejectWithValue(err.response.data.message || 'Profile update failed');

@@ -187,7 +187,6 @@ const serviceSlice = createSlice({
         state.success = false;
       })
       .addCase(createServiceAsync.fulfilled, (state, action) => {
-        console.log("action.payload", action.payload)
         state.loading = false;
         state.services.push(action.payload); 
         state.success = true;

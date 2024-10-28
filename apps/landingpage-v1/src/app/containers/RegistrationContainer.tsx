@@ -18,7 +18,6 @@ const AdminRegistrationContainer: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   const handleRegister = (data: RegistrationFormData) => {
-    console.log("data", data)
     registerAdmin(data);
   };
 
@@ -27,9 +26,6 @@ const AdminRegistrationContainer: React.FC = () => {
       setSnackbarMessage('Admin registered successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-
-      // Log userId and token for debugging purposes (remove in production)
-      console.log('UserId:', user?.userId, 'Token:', user?.token);
 
       // Navigate to the company registration page
       navigate('/company-registration');

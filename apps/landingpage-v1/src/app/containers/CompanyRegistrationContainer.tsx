@@ -20,7 +20,6 @@ const CompanyRegistrationContainer: React.FC = () => {
 
   // Handler for company registration submission
   const handleRegister = (data: CompanyRegistrationFormData) => {
-    console.log('data', data);
     registerCompany(data);  // Placeholder for the action to register the company
   };
 
@@ -29,9 +28,6 @@ const CompanyRegistrationContainer: React.FC = () => {
       setSnackbarMessage('Company registered successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-
-      // Log userId for debugging purposes (remove in production)
-      console.log('UserId:', user?.userId);
 
       // Navigate to the next step (e.g., working hours configuration)
       navigate('/company-hours');  // Placeholder for the next step after company registration

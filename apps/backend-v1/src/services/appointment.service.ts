@@ -27,7 +27,6 @@ export const getProviderAvailableSlots = async (
   let availableSlots: string[] = [];
 
   try {
-    console.log('--- Fetching Provider and Service ---');
     // Step 1: Fetch provider and service
     const provider = await appointmentRepository.findProviderById(providerId);
     if (!provider) {
@@ -37,7 +36,6 @@ export const getProviderAvailableSlots = async (
         message: `Provider with ID ${providerId} not found`,
       };
     }
-    console.log('Provider fetched:', provider);
 
     const service = await appointmentRepository.findServiceById(serviceId);
     if (!service) {
@@ -47,18 +45,14 @@ export const getProviderAvailableSlots = async (
         message: `Service with ID ${serviceId} not found`,
       };
     }
-    console.log('Service fetched:', service);
 
     // Step 2: Get working hours from provider or fallback to company
     let workingHours: WorkingHours[] | undefined = provider.workingHours;
-    console.log('Initial Working Hours:', workingHours);
 
     if (!workingHours || workingHours.length === 0) {
-      console.log('Provider has no working hours. Fetching company working hours...');
       const companyId = new Types.ObjectId(provider.companyId.toString());
       const company = await appointmentRepository.findCompanyById(companyId);
       if (!company || !company.workingHours || company.workingHours.length === 0) {
-        console.log('No company working hours found.');
         return {
           status: 200,
           code: 'NO_WORKING_HOURS',
@@ -67,18 +61,15 @@ export const getProviderAvailableSlots = async (
         };
       }
       workingHours = company.workingHours;
-      console.log('Company Working Hours:', workingHours);
     }
 
     // Step 3: Filter working hours for the requested day
     const dayOfWeek = selectedDate.format('dddd'); // e.g., 'Monday'
-    console.log(`Filtering working hours for: ${dayOfWeek}`);
     const hoursForDay = workingHours.find(
       (hours: WorkingHours) => hours.day.toLowerCase() === dayOfWeek.toLowerCase()
     );
 
     if (!hoursForDay) {
-      console.log(`No working hours found for ${dayOfWeek}.`);
       return {
         status: 200,
         code: 'NO_WORKING_HOURS_FOR_DAY',
@@ -87,7 +78,6 @@ export const getProviderAvailableSlots = async (
       };
     }
     // Step 4: Generate time slots using service duration and buffer time
-    console.log('--- Generating Time Slots ---');
     // Construct startTime and endTime with the selected date and timezone
     const [startHour, startMinute] = hoursForDay.start.split(':').map(Number);
     const [endHour, endMinute] = hoursForDay.end.split(':').map(Number);
@@ -124,10 +114,8 @@ export const getProviderAvailableSlots = async (
       service.duration, // Use service duration for slot length
       service.bufferDuration // Use service buffer time between slots
     );
-    console.log('Generated Slots before Filtering:', availableSlots);
 
     // Step 5: Fetch existing appointments for the provider and remove booked slots
-    console.log('--- Fetching Existing Appointments ---');
     const appointments = await appointmentRepository.findAppointments(
       providerId,
       role,
@@ -135,15 +123,12 @@ export const getProviderAvailableSlots = async (
       startTime.toDate(),
       endTime.toDate()
     );
-    console.log('Appointments Fetched:', appointments);
 
     const bookedSlots = appointments.data.map(appointment =>
       moment(appointment.dateTime).tz(timezone).format('HH:mm')
     );
-    console.log('Booked Slots:', bookedSlots);
 
     availableSlots = availableSlots.filter(slot => !bookedSlots.includes(slot));
-    console.log('Available Slots after Filtering:', availableSlots);
 
     return {
       status: 200,
@@ -173,10 +158,6 @@ function generateTimeSlots(
   const slots: string[] = [];
   let currentTime = start.clone();
 
-  console.log('--- Generating Slots ---');
-  console.log('Service Duration:', serviceDuration, 'minutes');
-  console.log('Buffer Duration:', bufferDuration, 'minutes');
-
   while (currentTime.isBefore(end)) {
     // Check if current time is within a break period
     const inBreak = breaks.some(breakPeriod => {
@@ -200,7 +181,6 @@ function generateTimeSlots(
 
     if (!inBreak) {
       slots.push(currentTime.format('HH:mm'));
-      console.log('Added Slot:', currentTime.format('HH:mm'));
     } else {
       console.log('Current Time is within a break:', currentTime.format('HH:mm'));
     }
@@ -209,7 +189,6 @@ function generateTimeSlots(
     currentTime.add(serviceDuration + bufferDuration, 'minutes');
   }
 
-  console.log('Total Slots Generated:', slots.length);
   return slots;
 }
 
@@ -243,7 +222,7 @@ export const createAppointment = async (
     const endTime = new Date(appointmentDateTime.getTime() + service.duration * 60000);
 
     const overlappingAppointments = await appointmentRepository.findAppointments(providerId, role, "own", appointmentDateTime, endTime);
-    
+
     if (overlappingAppointments.data && overlappingAppointments.data.length > 0) {
       return {
         status: 409,
@@ -408,7 +387,6 @@ export const cancelAppointment = async (
       data: updatedAppointment,
     };
   } catch (error) {
-    console.error('Error cancelling appointment:', error);
     return {
       status: 500,
       code: 'SERVER_ERROR',
@@ -484,7 +462,6 @@ export const editAppointment = async (
       data: existingAppointment
     };
   } catch (error) {
-    console.error('Error updating appointment:', error);
     return {
       status: 500,
       message: 'Failed to update appointment',

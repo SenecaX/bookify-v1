@@ -284,11 +284,8 @@ const ProviderCalendarContainer: React.FC = () => {
   const handleBookAppointmentSubmit = async (data: any) => {
     if (!providerId) return;
 
-    console.log("data", data)
-
     try {
       const formattedDate = moment(data.date).format('YYYY-MM-DD');
-      console.log("formattedDate", formattedDate)
       const response = await bookAppointment(
         data.customerId,
         data.providerId,

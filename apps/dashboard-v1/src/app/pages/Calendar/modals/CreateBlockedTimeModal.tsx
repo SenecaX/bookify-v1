@@ -40,7 +40,6 @@ const CreateBlockedTimeModal: React.FC<CreateBlockedTimeModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      console.log('Resetting form for new Blocked Time');
       
       const formattedStartTime = timeRange.start.toLocaleTimeString('en-GB', {
         hour: '2-digit',

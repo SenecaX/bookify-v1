@@ -43,22 +43,11 @@ const BlockTimeModal: React.FC<BlockTimeModalProps> = ({
   });
 
   const { reset } = methods;
-  
-  useEffect(() => {
-    if (selectedBlockedTime) {
-      console.log('selectedBlockedTime', selectedBlockedTime);
-    }
-  }, [selectedBlockedTime]);
-  
 
   useEffect(() => {
     if (isOpen) {
-      console.log('useEffect triggered with isOpen:', isOpen);
-      console.log('selectedBlockedTime:', selectedBlockedTime);
-      console.log('timeRange:', timeRange);
       
       if (selectedBlockedTime) {
-        console.log('Resetting form for selectedBlockedTime');
         const formattedStartTime = moment(selectedBlockedTime.startTime).format('HH:mm');
         const formattedEndTime = moment(selectedBlockedTime.endTime).format('HH:mm');
         
@@ -68,7 +57,6 @@ const BlockTimeModal: React.FC<BlockTimeModalProps> = ({
           reason: selectedBlockedTime.reason || '',
         });
       } else if (timeRange) {
-        console.log('Resetting form for new timeRange');
         const formattedStartTime = timeRange.start.toLocaleTimeString('en-GB', {
           hour: '2-digit',
           minute: '2-digit',
