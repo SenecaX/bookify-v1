@@ -5,23 +5,25 @@ import { IconButton } from '@mui/material';
 import { IAppointment } from '../types';
 
 export const appointmentColumns = (
+  getUserNameById: (userId: string) => string,
+  getServiceNameById: (serviceId: string) => string,
   handleEditAppointment?: (row: IAppointment) => void,
   handleDeleteAppointment?: (row: IAppointment) => void
 ) => [
   { 
-    header: 'Customer ID', 
+    header: 'Customer Name', 
     key: 'customerId', 
-    render: (row: IAppointment) => row.customerId 
+    render: (row: IAppointment) => getUserNameById(row.customerId) 
   },
   { 
-    header: 'Provider ID', 
+    header: 'Provider Name', 
     key: 'providerId', 
-    render: (row: IAppointment) => row.providerId 
+    render: (row: IAppointment) => getUserNameById(row.providerId) 
   },
   { 
-    header: 'Service ID', 
+    header: 'Service Name', 
     key: 'serviceId', 
-    render: (row: IAppointment) => row.serviceId 
+    render: (row: IAppointment) => getServiceNameById(row.serviceId) 
   },
   { 
     header: 'Date & Time', 
@@ -32,21 +34,5 @@ export const appointmentColumns = (
     header: 'Status', 
     key: 'status',
     render: (row: IAppointment) => row.status 
-  },
-  { 
-    header: 'Actions', 
-    key: 'actions',
-    render: (row: IAppointment) => (
-      <>
-        {/* Edit Action */}
-        <IconButton onClick={() => handleEditAppointment?.(row)}>
-          <EditIcon />
-        </IconButton>
-        {/* Delete Action */}
-        <IconButton onClick={() => handleDeleteAppointment?.(row)}>
-          <DeleteIcon />
-        </IconButton>
-      </>
-    )
-  },
+  }
 ];

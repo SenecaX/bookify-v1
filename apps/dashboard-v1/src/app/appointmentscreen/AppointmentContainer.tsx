@@ -8,9 +8,11 @@ import { appointmentColumns } from './appointmentColumns';
 
 const AppointmentContainer: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { appointments, loading } = useSelector(
-    (state: RootState) => state.appointment
-  );
+
+  // Access appointments, users, and services from the state
+  const { appointments, loading } = useSelector((state: RootState) => state.appointment);
+  const { users } = useSelector((state: RootState) => state.user);
+  const { services } = useSelector((state: RootState) => state.service);
   const status = ['Booked', 'Cancelled'];
 
   useEffect(() => {
@@ -27,6 +29,17 @@ const AppointmentContainer: React.FC = () => {
     );
   }, [dispatch]);
 
+  // Helper functions to find names by ID
+  const getUserNameById = (userId: string) => {
+    const user = users.find((user) => user._id === userId);
+    return user ? `${user.firstName} ${user.lastName}` : 'Unknown User';
+  };
+
+  const getServiceNameById = (serviceId: string) => {
+    const service = services.find((service) => service._id === serviceId);
+    return service ? service.name : 'Unknown Service';
+  };
+
   return (
     <Box>
       {loading && <p>Loading appointments...</p>}
@@ -35,7 +48,8 @@ const AppointmentContainer: React.FC = () => {
         data={appointments}
         columns={
           appointmentColumns(
-   
+            getUserNameById,
+            getServiceNameById
           ) as any
         }
       />
