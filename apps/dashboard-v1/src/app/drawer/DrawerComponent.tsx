@@ -35,6 +35,10 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
           <ListItemIcon><PeopleIcon /></ListItemIcon>
           <ListItemText primary="Users" />
         </ListItem>
+        <ListItem component={Link} to="/appointments">
+          <ListItemIcon><ServicesIcon /></ListItemIcon>
+          <ListItemText primary="Appointments" />
+        </ListItem>
       </List>
     </Box>
   );

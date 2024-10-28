@@ -33,6 +33,8 @@ export class AppointmentRepository {
     if (statusArray.length > 0) {
       query.status = { $in: statusArray };
     }
+    const test = await Appointment.find(query).exec();
+    console.log("await Appointment.find(query).exec()", test)
   
     return await Appointment.find(query).exec();
   }  

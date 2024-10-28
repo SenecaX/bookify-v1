@@ -10,6 +10,7 @@ import ProviderCalendar from './pages/Calendar/ProviderCalendarContainer';
 import ProvidersPage from './pages/ProvidersPage';
 import ServicesPage from './pages/ServicesPage';
 import UsersPage from './pages/UsersPage';
+import AppointmentContainer from './appointmentscreen/AppointmentContainer';
 
 
 const App: React.FC = () => {
@@ -36,6 +37,8 @@ const App: React.FC = () => {
             <Route path="/users" element={<UsersPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/calendar" element={<ProviderCalendar />} />
+            <Route path="/appointments" element={ <AppointmentContainer />} />
+
 
               {/* Add more routes like /settings, /notifications here */}
             </Route>
