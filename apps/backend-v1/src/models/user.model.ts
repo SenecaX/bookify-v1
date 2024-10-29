@@ -72,22 +72,22 @@ const NotificationSettingsSchema = new Schema({
 
 // Schema Definition
 const UserSchema = new Schema<IUser>({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true, index: true },
-  password: { type: String, required: true },
-  phone: { type: String },
+  firstName: { type: String, required: true },  // Consider validation for length or regex to ensure data quality
+  lastName: { type: String, required: true },   // Similar comment as for firstName
+  email: { type: String, required: true, unique: true, index: true },  // Consider regex validation for email format
+  password: { type: String, required: true },  // Ensure password meets minimum security standards
+  phone: { type: String },  // Add optional validation for format (e.g., regex for phone numbers)
   address: {
     street: { type: String },
     city: { type: String },
-    zip: { type: String },
-    country: { type: String }
+    zip: { type: String },  // Add regex validation for zip to standardize data
+    country: { type: String }  // Consider adding validation or options for country codes
   },
   isActive: { type: Boolean, default: true },
   role: { type: String, enum: ['admin', 'provider', 'customer'], required: true, index: true },
   companyId: { type: Schema.Types.ObjectId, ref: 'Company' }, 
   // Provider-specific fields
-  servicesOffered: [ServicesOfferedSchema],
+  servicesOffered: [ServicesOfferedSchema],  // Consider moving provider-specific fields into a `providerDetails` object
   workingHours: [WorkingHoursSchema],
   unavailablePeriods: [UnavailablePeriodSchema],
   notificationSettings: [NotificationSettingsSchema],
@@ -99,6 +99,7 @@ UserSchema.pre('save', function(next) {
 
   if (user.role !== 'provider') {
     // If the user is not a provider, remove provider-specific fields
+    // Consider moving this role-specific logic to a helper or middleware function
     user.servicesOffered = undefined;
     user.workingHours = undefined;
     user.unavailablePeriods = undefined;
