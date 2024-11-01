@@ -24,7 +24,7 @@ export interface IUser extends Document {
     serviceName: string;
   }[];
   workingHours?: {
-    day: string;  // Align to company model structure
+    day: string; 
     start: string;
     end: string;
     breaks?: { start: string; end: string }[];
@@ -93,7 +93,16 @@ const UserSchema = new Schema<IUser>({
   notificationSettings: [NotificationSettingsSchema],
 }, { timestamps: true });
 
-// Role-based validation to ensure provider-specific fields are only present for provider roles
+/**
+ * Mongoose pre-save middleware function to handle provider-specific fields based on user role.
+ *
+ * This function checks if the user's role is 'provider'. If not, it removes the provider-specific fields
+ * from the user object to ensure data integrity and security.
+ *
+ * @param next - The next middleware function in the stack.
+ *
+ * @returns {void}
+ */
 UserSchema.pre('save', function(next) {
   const user = this as IUser;
 
